@@ -1,0 +1,80 @@
+{
+  "system": {
+    "name": "ECE-CLI Autonomous Application Builder",
+    "version": "1.0.0",
+    "mode": "development",
+    "debug": true
+  },
+  "agents": {
+    "frontend": {
+      "name": "Continue Frontend Agent",
+      "type": "v0.dev-inspired",
+      "stack": {
+        "framework": "React + Next.js",
+        "styling": "Tailwind CSS",
+        "components": "shadcn/ui",
+        "animations": "GSAP",
+        "design": "Glassmorphism"
+      },
+      "phases": [
+        "Landing Page",
+        "Auth UI",
+        "App Shell",
+        "Component Enhancement",
+        "Final Polish",
+        "Deploy to Vercel"
+      ],
+      "autonomous": true,
+      "enabled": true
+    },
+    "backend": {
+      "name": "Copilot Backend Agent",
+      "type": "OpenHands-inspired",
+      "stack": {
+        "runtime": "Next.js API Routes",
+        "database": "Supabase/PostgreSQL",
+        "auth": ["Email", "Google", "Phantom", "Solflare"],
+        "deployment": "Vercel",
+        "language": "TypeScript"
+      },
+      "phases": [
+        "Auth System",
+        "Users & Sessions",
+        "App Logic APIs",
+        "Optimization & Tests",
+        "Deploy & Verify"
+      ],
+      "autonomous": true,
+      "enabled": true
+    }
+  },
+  "features": {
+    "realTimeBuilding": true,
+    "multiProviderAuth": true,
+    "progressTracking": true,
+    "appManagement": true,
+    "deploymentIntegration": true,
+    "healthChecking": true
+  },
+  "ui": {
+    "theme": "glassmorphism",
+    "colors": {
+      "primary": "purple-to-blue-gradient",
+      "background": "purple-900-to-indigo-900",
+      "accent": "white/10",
+      "text": "white"
+    },
+    "animations": {
+      "transitions": true,
+      "hover": true,
+      "loading": true,
+      "progress": true
+    }
+  },
+  "deployment": {
+    "platform": "vercel",
+    "buildCommand": "npm run build",
+    "outputDirectory": ".next",
+    "environment": "production"
+  }
+}

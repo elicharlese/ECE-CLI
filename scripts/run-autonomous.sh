@@ -1,22 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
-
-AGENTS_DIR="$HOME/ECE-CLI/agents"
+AGENTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../agents" && pwd)"
 FRONTEND_PROMPT="$AGENTS_DIR/continue-frontend-agent.prompt.md"
 BACKEND_PROMPT="$AGENTS_DIR/copilot-backend-agent.prompt.md"
 
-echo "🚀 Running ECE-CLI autonomous AI dev system..."
+DOCKER_MODE="${1:-}"
 
-echo "🧩 Running frontend agent (Continue)..."
+echo "🧠 Starting ECE-CLI Autonomous Build Flow"
+
+if [[ "$DOCKER_MODE" == "--docker" ]]; then
+  echo "🐳 Launching Docker Compose services..."
+  docker-compose -f "$(dirname "${BASH_SOURCE[0]}")/../docker/docker-compose.yml" up --build -d
+fi
+
+echo "🧩 Running Frontend Agent (v0 / Continue CLI)..."
 continue run --prompt "$FRONTEND_PROMPT"
 
-echo "🔧 Running backend agent (Copilot)..."
+echo "🔧 Running Backend Agent (OpenHands / Copilot CLI)..."
 copilot chat --instruction "$BACKEND_PROMPT"
 
-echo "✅ All agents complete. Would you like to deploy?"
+echo "✅ Both agents completed their phases."
 
-read -p "Deploy to production? (y/n): " confirm
-if [[ "$confirm" == "y" ]]; then
-  bash "$HOME/ECE-CLI/scripts/deploy.sh"
+read -n1 -p "🚀 Ready to deploy? (y/n): " CONFIRM
+echo
+if [[ "${CONFIRM,,}" == "y" ]]; then
+  bash "$(dirname "${BASH_SOURCE[0]}")/deploy.sh"
+else
+  echo "💤 Skipping deployment."
 fi
