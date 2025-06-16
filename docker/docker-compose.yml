@@ -2,15 +2,24 @@ version: "3.8"
 services:
   frontend:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile.frontend
+      context: ../generated-app
+      dockerfile: ../docker/Dockerfile.frontend
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
       - PORT=3000
+      - NEXT_PUBLIC_API_URL=http://backend:4000
+    env_file:
+      - ../.env.development
+    volumes:
+      - ../generated-app:/app
+      - /app/node_modules
+      - /app/.next
     depends_on:
       - backend
+    networks:
+      - ece-network
 
   backend:
     build:
@@ -21,8 +30,19 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/ece_backend
+      - JWT_SECRET=development-secret-key
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - ../.env.development
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
     depends_on:
       - db
+      - redis
+    networks:
+      - ece-network
 
   db:
     image: postgres:15-alpine
@@ -32,6 +52,54 @@ services:
       POSTGRES_DB: ece_backend
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ../database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - ece-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ece-network
+
+  # Optional monitoring services
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - ece-network
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ../monitoring/grafana:/etc/grafana/provisioning
+    networks:
+      - ece-network
+    profiles:
+      - monitoring
 
 volumes:
   db-data:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  ece-network:
+    driver: bridge

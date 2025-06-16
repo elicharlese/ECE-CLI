@@ -1,11 +1,54 @@
-FROM node:18-alpine AS deps
+# Multi-stage build for backend services
+FROM node:18-alpine AS base
+RUN apk add --no-cache libc6-compat curl
 WORKDIR /app
-COPY package*.json yarn.lock* ./
-RUN yarn install --frozen-lockfile
 
-FROM node:18-alpine AS runner
-WORKDIR /app
+# Install dependencies
+FROM base AS deps
+COPY package*.json yarn.lock* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+# Development stage
+FROM base AS dev
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 EXPOSE 4000
-CMD ["yarn", "start"]
+ENV PORT 4000
+ENV NODE_ENV development
+CMD ["npm", "run", "dev"]
+
+# Build stage
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build the application if it has a build step
+RUN if [ -f "package.json" ] && npm run | grep -q "build"; then npm run build; fi
+
+# Production stage
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=4000
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 apiuser
+
+# Copy dependencies and application
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder --chown=apiuser:nodejs /app ./
+
+USER apiuser
+
+EXPOSE 4000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:4000/health || exit 1
+
+CMD ["npm", "start"]
