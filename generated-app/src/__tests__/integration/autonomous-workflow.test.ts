@@ -4,10 +4,9 @@ import { GET as healthGet } from '../../app/api/health/route';
 import { POST as buildPost } from '../../app/api/build/route';
 
 describe('Integration Tests - Full Autonomous Workflow', () => {
-  let sessionToken: string;
   let userId: string;
 
-  const createMockRequest = (method: string, body?: any, headers?: Record<string, string>) => {
+  const createMockRequest = (method: string, body?: Record<string, unknown>, headers?: Record<string, string>) => {
     const request = {
       method,
       json: jest.fn().mockResolvedValue(body),
@@ -20,7 +19,6 @@ describe('Integration Tests - Full Autonomous Workflow', () => {
   describe('Complete User Journey', () => {
     it('should complete full autonomous app building workflow', async () => {
       // Step 1: Health check
-      const healthRequest = createMockRequest('GET');
       const healthResponse = await healthGet();
       const healthData = await healthResponse.json();
 
@@ -40,7 +38,6 @@ describe('Integration Tests - Full Autonomous Workflow', () => {
       expect(authData.success).toBe(true);
       expect(authData.session).toBeDefined();
       
-      sessionToken = authData.session.id;
       userId = authData.user.id;
 
       // Step 3: Start app building
@@ -100,7 +97,6 @@ describe('Integration Tests - Full Autonomous Workflow', () => {
       const authResponse = await authPost(authRequest);
       const authData = await authResponse.json();
       
-      sessionToken = authData.session.id;
       userId = authData.user.id;
     });
 
@@ -168,7 +164,6 @@ describe('Integration Tests - Full Autonomous Workflow', () => {
       });
 
       const buildResponse = await buildPost(buildRequest);
-      const buildData = await buildResponse.json();
 
       // Should either succeed or fail gracefully
       expect([200, 400].includes(buildResponse.status)).toBe(true);

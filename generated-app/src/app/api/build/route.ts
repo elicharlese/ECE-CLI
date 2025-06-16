@@ -151,8 +151,20 @@ export async function GET(request: NextRequest) {
   }
 }
 
+interface BuildStepConfig {
+  framework?: string;
+  features?: string[];
+  authentication?: string[];
+  database?: string;
+  deployment?: string;
+  cicd?: boolean;
+  monitoring?: boolean;
+  testing?: boolean;
+  [key: string]: unknown;
+}
+
 // Generate comprehensive build steps based on configuration
-function generateBuildSteps(config: any): string[] {
+function generateBuildSteps(config: BuildStepConfig): string[] {
   const steps = [
     'Analyzing project requirements',
     'Initializing project structure',
@@ -174,12 +186,12 @@ function generateBuildSteps(config: any): string[] {
   }
 
   // Authentication
-  if (config.authentication?.length > 0) {
+  if (config.authentication && config.authentication.length > 0) {
     steps.push('Configuring authentication providers');
   }
 
   // Features
-  if (config.features?.length > 0) {
+  if (config.features && config.features.length > 0) {
     steps.push('Implementing application features');
     
     if (config.features.includes('Real-time Chat')) {

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as os from 'os';
 
 // Comprehensive system status endpoint integrating with Docker infrastructure
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check if running in Docker mode
     const dockerMode = process.env.DOCKER_MODE === 'true' || 
@@ -143,7 +144,7 @@ export async function GET(request: NextRequest) {
         },
         cpu: {
           usage: Math.random() * 30 + 10, // Simulated CPU usage
-          cores: require('os').cpus().length
+          cores: os.cpus().length
         },
         storage: dockerMode ? {
           used: '2.3 GB',

@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { POST, GET } from '../../app/api/auth/route';
 
 // Mock the Next.js request/response
-const createMockRequest = (method: string, body?: any, headers?: Record<string, string>) => {
+const createMockRequest = (method: string, body?: Record<string, unknown>, headers?: Record<string, string>) => {
   const request = {
     method,
     json: jest.fn().mockResolvedValue(body),
