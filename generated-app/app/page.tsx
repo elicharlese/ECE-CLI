@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const handleAuth = async (provider: string) => {
     setIsLoading(true);
@@ -33,7 +31,7 @@ export default function Home() {
         localStorage.setItem('user', JSON.stringify(data.user));
         
         // Redirect to dashboard
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       } else {
         alert('Authentication failed: ' + data.error);
       }
@@ -62,6 +60,12 @@ export default function Home() {
         <div className="text-2xl font-bold text-white">ECE-CLI</div>
         <div className="flex gap-4">
           <button 
+            onClick={() => window.location.href = '/admin'}
+            className="px-4 py-2 text-white/60 hover:text-white/80 transition-colors text-sm"
+          >
+            Admin
+          </button>
+          <button 
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 text-white/80 hover:text-white transition-colors"
           >
@@ -88,23 +92,23 @@ export default function Home() {
           </h1>
           
           <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-            ECE-CLI is the first autonomous application builder that uses AI agents to create 
-            full-stack applications from simple prompts.
+            Professional custom app development powered by AI agents. Get your application 
+            built and delivered on your timeline with guaranteed quality.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
             <button 
-              onClick={handleStartDemo}
-              disabled={isLoading}
-              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full text-white font-semibold text-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300 shadow-2xl shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 disabled:opacity-50"
+              onClick={() => window.location.href = '/order'}
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full text-white font-semibold text-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300 shadow-2xl shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105"
             >
-              {isLoading ? 'Loading...' : 'Start Demo'}
+              🚀 Order Custom App
             </button>
             <button 
-              onClick={() => setIsModalOpen(true)}
-              className="px-8 py-4 backdrop-blur-sm bg-white/10 border border-white/20 rounded-full text-white font-semibold text-lg hover:bg-white/20 transition-all duration-300"
+              onClick={handleStartDemo}
+              disabled={isLoading}
+              className="px-8 py-4 backdrop-blur-sm bg-white/10 border border-white/20 rounded-full text-white font-semibold text-lg hover:bg-white/20 transition-all duration-300 disabled:opacity-50"
             >
-              Connect Wallet
+              {isLoading ? 'Loading...' : '🎮 Try Demo'}
             </button>
           </div>
 
@@ -112,26 +116,26 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8 mt-20 max-w-5xl mx-auto">
             <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
               <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
-                🤖
+                💼
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">AI Agents</h3>
-              <p className="text-white/70">Autonomous frontend and backend agents work together to build your app.</p>
+              <h3 className="text-xl font-semibold text-white mb-2">Custom Development</h3>
+              <p className="text-white/70">Professional apps built to your exact specifications and requirements.</p>
             </div>
             
             <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
               <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
-                ⚡
+                📅
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Lightning Fast</h3>
-              <p className="text-white/70">From idea to deployed application in minutes, not days.</p>
+              <h3 className="text-xl font-semibold text-white mb-2">Your Timeline</h3>
+              <p className="text-white/70">Choose delivery in 24 hours, 3 days, 1 week, or 2 weeks.</p>
             </div>
             
             <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
               <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
-                🚀
+                🎯
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Production Ready</h3>
-              <p className="text-white/70">Generated apps are production-ready with modern tech stacks.</p>
+              <h3 className="text-xl font-semibold text-white mb-2">Multiple Delivery Options</h3>
+              <p className="text-white/70">Get your app via GitHub, ZIP download, or live deployment.</p>
             </div>
           </div>
         </div>
